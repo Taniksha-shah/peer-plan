@@ -1,0 +1,43 @@
+/*css for dashboard and all other pages*/
+nav {
+        background-color: rgb(93, 13, 45);
+    }
+
+/*css for calendar*/
+.month-title {
+      border-bottom: solid;
+      border-color: rgba(211, 211, 211, 0.595);
+      padding-bottom: 20px;
+    }
+
+/*css for todo*/
+.to-do-container {
+      height: 600px;
+      padding: 20px;
+    }
+
+/*css for pomodoro*/
+ .timer-container {
+      display: flex;
+    }
+
+    .timer-container {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+    }
+
+/*css for studyroom*/
+.form-section, .list-section {
+      margin-top: 2rem;
+    }
+
+    .form-section input,
+    .form-section textarea {
+      margin-bottom: 1rem;
+    }
+
+/*css for profile*/
+.vh-100 {
+      height: 100vh;
+    }

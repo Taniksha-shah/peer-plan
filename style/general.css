@@ -1,0 +1,34 @@
+body {
+      margin: 0;
+      padding-top: 70px; /* height of fixed navbar */
+      padding-left: 200px; /* width of sidebar */
+      overflow-x: hidden;
+    }
+
+    nav {
+      background-color: rgb(93, 13, 45);
+    }
+
+    aside {
+      position: fixed;
+      top: 61px;
+      left: 0;
+      width: 200px;
+      height: calc(100vh - 70px);
+      overflow-y: auto;
+      border-right: 1px solid #ddd;
+    }
+
+    main {
+        padding-left : 100px !important;
+    }
+
+    .main-content {
+      padding: 2rem;
+    }
+
+    .page-title {
+      border-bottom: solid;
+      border-color: rgba(211, 211, 211, 0.595);
+      padding-bottom: 20px;
+    }

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PeerPlan Sign-in</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="../style/style.css" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  </head>
+<body>
+
+  <nav class="navbar navbar-expand-lg navbar-dark bg-rgb(93, 13, 45) px-4 login-nav">
+    <a class="navbar-brand fw-bold" href="index.html">PeerPlan</a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item"><a class="nav-link" href="index.html">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="about.html">About</a></li>
+        <li class="nav-item"><a class="nav-link" href="registration.html">Sign Up</a></li>
+        <li class="nav-item"><a class="nav-link active" href="login.html">Sign In</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main class="container text-center py-5 login-main">
+    
+    <form class="p-4 bg-light rounded shadow-sm" style="max-width: 400px; margin: auto;" action="dashboard.html" method="GET">
+    
+    <h1 class="display-5 fw-semibold login-h1">Welcome back!</h1>
+    <div class="mb-3">
+        <input type="text" class="form-control" id="username" placeholder="Username" required>
+    </div>
+
+    <div class="mb-3">
+        <input type="password" class="form-control" id="password" placeholder="Password" required>
+    </div>
+
+    <a href="dashboard.html">
+        <button type="submit" class="btn w-100" id="sign-in-button">Sign In</button>
+    </a>
+
+    <p class="lead md-3" style="color:rgb(93, 13, 45)">
+        <a href="password.html">Forgot password?</a>
+    </p>
+    </form>
+
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
