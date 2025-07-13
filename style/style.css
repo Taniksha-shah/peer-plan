@@ -1,0 +1,129 @@
+.home-main {
+      margin-top : 200px;
+    }
+    nav, body {
+      background-color: rgb(93, 13, 45);
+      color: rgb(255, 254, 216);
+    }
+
+/*css for login page*/
+.login-main {
+      margin-top : 125px;
+    }
+.login-nav {
+      box-shadow: rgba(0,0,0,10);
+    }
+    .login-h1 {
+        color:rgb(93, 13, 45);
+    }
+    #sign-in-button {
+        background-color: rgb(93, 13, 45);
+        color: white;
+        cursor: pointer;
+    }
+    #sign-in-button:hover {
+      box-shadow: 0 0 0 4px rgba(0,0,0,0.1);
+    }
+
+/*css for registration page*/
+.sign-in-main {
+      margin-top : 125px;
+    }
+    nav, body {
+      background-color: rgb(93, 13, 45);
+      color: rgb(255, 254, 216);
+    }
+    .sign-in-nav {
+      box-shadow: rgba(0,0,0,10);
+    }
+    .sign-in-h3 {
+        color:rgb(93, 13, 45);
+    }
+    #sign-up-button {
+        background-color: rgb(93, 13, 45);
+        color: white;
+        cursor: pointer;
+    }
+    #sign-up-button:hover {
+      box-shadow: 0 0 0 4px rgba(0,0,0,0.1);
+    }
+    #registration-form-container {
+        max-width: 400px; 
+        margin: auto;
+    }
+
+/*css for about page*/
+      * {
+        box-sizing: border-box;
+      }
+
+      html, body {
+        max-width: 100%;
+        overflow-x: hidden;
+      }
+
+      .about-main {
+        background-color: rgb(93, 13, 45);
+        padding-left: 25px !important;
+        padding-right: 25px !important;
+        padding-top: 90px !important; 
+      }
+
+      .about-h3,
+      .about-p {
+        color: white;
+      }
+
+      .about-row {
+        padding-top: 25px !important;
+        padding-bottom: 25px !important;
+        margin-top: 25px !important;
+      }
+
+      .time-management-img {
+        width: 390px;
+        height: 390px;
+        padding-top: 0px !important;
+        margin-top: 0px !important;
+        overflow: hidden;
+      }
+
+      #why-row-div {
+        background-color: white;
+        margin-top: 50px !important;
+        margin-bottom: 80px !important;
+      }
+
+      .animation-element {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        margin-bottom: 75px;
+      }
+
+      .row-container {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+      }
+
+      .text-container {
+        margin-top: 40px !important;
+      }
+
+      .about-img {
+        width: 100%;
+        max-width: 300px;
+        height: auto;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow-x: hidden;
+      }
+
+      .about-img img {
+        width: 100%;
+        height: auto;
+        display: block;
+        overflow-x: hidden;
+      }
