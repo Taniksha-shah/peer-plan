@@ -1,5 +1,4 @@
-# study-mate
----
+# peer-plan
 
 ```markdown
 # 🎓 Student Productivity & Study Platform
@@ -59,11 +58,16 @@ To empower students with an all-in-one digital workspace that helps them:
 ```
 
 student-dashboard/
-├── index.html                 ← Landing/Login mockup
+├── index.html                 ← Home page
+├── about.html                 ← About Us
+├── login.html                 ← Sign-in
+├── registration.html          ← Sign-up
 ├── dashboard.html             ← Main overview
 ├── todo.html                  ← To-do list module
 ├── calendar.html              ← Event planner
 ├── pomodoro.html              ← Focus timer
+├── studyroom.html             ← Schedule meetings
+├── videocall.html             ← Public video call study room
 │
 ├── /assets/
 │   ├── /css/
