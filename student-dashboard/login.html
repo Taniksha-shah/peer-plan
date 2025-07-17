@@ -30,20 +30,19 @@
 
   <main class="container text-center py-5 login-main">
     
-    <form class="p-4 bg-light rounded shadow-sm" style="max-width: 400px; margin: auto;" action="dashboard.html" method="GET">
+    <form class="p-4 bg-light rounded shadow-sm" id="registration-form-container" style="max-width: 400px; margin: auto;" action="dashboard.html" method="GET" onsubmit="return validateForm()" novalidate>
     
     <h1 class="display-5 fw-semibold login-h1">Welcome back!</h1>
     <div class="mb-3">
-        <input type="text" class="form-control" id="username" placeholder="Username" required>
+        <input type="text" class="form-control" id="username" name="username" placeholder="Username">
     </div>
 
     <div class="mb-3">
-        <input type="password" class="form-control" id="password" placeholder="Password" required>
+        <input type="password" class="form-control" id="password" name="password" placeholder="Password">
     </div>
 
-    <a href="dashboard.html">
-        <button type="submit" class="btn w-100" id="sign-in-button">Sign In</button>
-    </a>
+    <button type="submit" class="btn w-100" id="sign-in-button">Sign In</button>
+
 
     <p class="lead md-3" style="color:rgb(93, 13, 45)">
         <a href="password.html">Forgot password?</a>
@@ -53,6 +52,7 @@
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../script/validateForm.js"></script>
 </body>
 </html>
 
