@@ -107,11 +107,43 @@
 
   <!-- Main Content -->
   <main class="main-content">
+    <!--
     <h1 class="page-title">To-do lists</h1>
       <div class="row g-4">
+      <div class="container mt-5" style="max-width: 600px;">
+      -->
+        <!-- Title Input -->
+  <div class="mb-4">
+    <label for="todoTitle" class="form-label fw-bold">To-Do List Title</label>
+    <input type="text" class="form-control" id="todoTitle" placeholder="e.g., Grocery List">
+  </div>
+
+  <!-- Task Input Section -->
+  <div class="card p-3 shadow-sm">
+    <div class="d-flex align-items-center gap-3 mb-3">
+      <input type="text" class="form-control" placeholder="Add a task...">
+      <button class="btn btn-outline-primary d-flex align-items-center justify-content-center p-2" style="width: 40px; height: 40px;">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" width="20" height="20">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+        </svg>
+      </button>
+    </div>
+
+    <!-- Task List Placeholder -->
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        Sample Task
+        <button class="btn btn-sm btn-outline-danger">Remove</button>
+      </li>
+    </ul>
+
+    <button class="btn btn-md-4 btn-success">Done</button>
+  </div>
+</div>
+
 
           <!-- To-do -->
-          <div class="col-md-4 to-do-container">
+          <div class="row-md-4 to-do-container">
             <div class="card">
               <div class="card-body">
                 <p class="text-muted">No tasks added</p>
