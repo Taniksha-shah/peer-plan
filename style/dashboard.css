@@ -9,11 +9,15 @@ nav {
       border-color: rgba(211, 211, 211, 0.595);
       padding-bottom: 20px;
     }
+#calendar {
+  max-width: 100%;
+  width: 100%;
+  box-sizing: border-box;
+}
 
 /*css for todo*/
 .to-do-container {
       height: 600px;
-      padding: 20px;
     }
 
 /*css for pomodoro*/
