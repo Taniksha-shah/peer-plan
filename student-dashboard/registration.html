@@ -31,15 +31,15 @@
 
   <main class="container text-center py-5 sign-in-main">
     
-    <form class="p-4 bg-light rounded shadow-sm" id="registration-form-container" action="dashboard.html" method="GET" onsubmit="return validateForm()">
+    <form class="p-4 bg-light rounded shadow-sm" id="registration-form-container" action="registration.php" method="POST" onsubmit="return validateForm()">
     
     <h3 class="display-5 fw-semibold sign-in-h3">Join our community today!</h3>
     <div class="mb-3">
-        <input type="text" class="form-control" id="username" placeholder="Username">
+        <input type="text" class="form-control" name="username" placeholder="Username">
     </div>
 
     <div class="mb-3">
-        <input type="password" class="form-control" id="password" placeholder="Password">
+        <input type="password" class="form-control" name="password" placeholder="Password">
     </div>
 
     <button type="submit" class="btn w-100" id="sign-up-button">Sign Up</button>
