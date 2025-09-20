@@ -263,7 +263,6 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     // 1. Render the calendar preview
@@ -275,10 +274,10 @@ document.addEventListener('DOMContentLoaded', function() {
             center: 'title',
             right: ''
         },
-        initialDate: new Date(), // Set to today's date
-        height: 250, // Adjust height to make it a small preview
+        initialDate: new Date(),
+        height: 250,
         events: {
-            url: 'get_events_for_dashboard.php', // Fetches only today's events
+            url: 'get_events_for_dashboard.php',
             method: 'POST',
             extraParams: {
                 start: new Date().toISOString().split('T')[0],
@@ -286,12 +285,10 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         },
         eventClick: function(info) {
-            // Redirect to the full calendar page
             window.location.href = 'calendar.html';
         },
         dayCellDidMount: function(info) {
-             // Add a click listener to each day cell to show events
-             info.el.addEventListener('click', function() {
+            info.el.addEventListener('click', function() {
                 const date = info.dateStr.split('T')[0];
                 fetchEventsForDate(date);
             });
@@ -302,10 +299,15 @@ document.addEventListener('DOMContentLoaded', function() {
     // 2. Function to fetch and display events for a specific date
     function fetchEventsForDate(date) {
         const eventsListContainer = document.getElementById('today-events-list');
-        eventsListContainer.innerHTML = ''; // Clear previous events
-
+        eventsListContainer.innerHTML = '';
         fetch(`get_events_by_date.php?date=${date}`)
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                // If response is not ok, throw an error to trigger catch block
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
         .then(events => {
             if (events.length > 0) {
                 events.forEach(event => {
@@ -385,7 +387,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 isRunning = false;
                 statusDisplay.textContent = 'Session complete!';
                 alert('Pomodoro session complete!');
-                // You can add logic here to start a break timer, etc.
             }
         }, 1000);
     }
@@ -399,12 +400,42 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Event listeners
-    startButton.addEventListener('click', startTimer);
-    resetButton.addEventListener('click', resetTimer);
+    if (startButton) startButton.addEventListener('click', startTimer);
+    if (resetButton) resetButton.addEventListener('click', resetTimer);
 
     // Initial calls on page load
     updateTimerDisplay();
     fetchLatestTodo();
+</script>
+<script>
+    // New Pomodoro sync logic
+    function syncPomodoroTimer() {
+        const dashboardTimerDisplay = document.getElementById('pomodoro-timer-display');
+        const dashboardStatusDisplay = document.getElementById('session-status');
+        const savedState = JSON.parse(sessionStorage.getItem('pomodoroTimerState'));
+
+        if (savedState && savedState.action === 'start') {
+            const elapsedTime = (new Date().getTime() - savedState.startTime) / 1000;
+            const remaining = savedState.remaining - elapsedTime;
+            
+            if (remaining > 0) {
+                const minutes = Math.floor(remaining / 60).toString().padStart(2, '0');
+                const seconds = Math.floor(remaining % 60).toString().padStart(2, '0');
+                dashboardTimerDisplay.textContent = `${minutes}:${seconds}`;
+                dashboardStatusDisplay.textContent = savedState.phase === 'session' ? 'Session in Progress' : 'Break in Progress';
+            } else {
+                dashboardTimerDisplay.textContent = '00:00';
+                dashboardStatusDisplay.textContent = 'Timer Finished';
+                sessionStorage.removeItem('pomodoroTimerState');
+            }
+        } else {
+            dashboardTimerDisplay.textContent = '25:00';
+            dashboardStatusDisplay.textContent = 'Session';
+        }
+    }
+
+    setInterval(syncPomodoroTimer, 1000);
+    syncPomodoroTimer();
 </script>
 </body>
 </html>

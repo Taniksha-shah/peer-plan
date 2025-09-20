@@ -10,7 +10,7 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 $servername = "localhost";
 $dbusername = "root";
 $dbpassword = "";
-$dbname = "your_database_name";
+$dbname = "peerplan";
 
 $conn = new mysqli($servername, $dbusername, $dbpassword, $dbname);
 
