@@ -1,15 +1,25 @@
+<?php
+session_start();
+
+// Redirect to login page if user is not logged in
+if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
+    header("Location: login.html");
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>PeerPlan Dashboard</title>
+  <title>PeerPlan Pomodoro Timer</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="../style/dashboard.css" rel="stylesheet" />
 </head>
 <body>
 
-<!-- Navbar -->
+  
+  <!-- Navbar -->
 <nav class="navbar navbar-dark navbar-expand-lg" style="background-color: rgb(93, 13, 45);">
   <div class="container-fluid">
     <button class="btn btn-light d-lg-none me-2" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas">
@@ -25,7 +35,7 @@
           <path stroke-linecap="round" stroke-linejoin="round"
             d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
         </svg>
-        <span class="username">Username</span>
+        <span class="username"><?php echo htmlspecialchars($_SESSION['username']); ?></span>
       </a>
     </div>
   </div>
@@ -40,7 +50,7 @@
   <div class="offcanvas-body">
     <ul class="nav flex-column">
           <li class="nav-item md-2">
-            <a href="calendar.html" class="nav-link text-dark d-flex align-items-center">
+            <a href="calendar.php" class="nav-link text-dark d-flex align-items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none"
                 viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                 class="me-2 side-bar-item-icon" width="20" height="20">
@@ -52,7 +62,7 @@
           </li>
 
           <li class="nav-item mb-2">
-            <a href="todo.html" class="nav-link text-dark d-flex align-items-center">
+            <a href="todo.php" class="nav-link text-dark d-flex align-items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none"
                 viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                 class="me-2 side-bar-item-icon" width="20" height="20">
@@ -64,7 +74,7 @@
           </li>
 
           <li class="nav-item mb-2">
-            <a href="pomodoro.html" class="nav-link text-dark d-flex align-items-center">
+            <a href="pomodoro.php" class="nav-link text-dark d-flex align-items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none"
                 viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                 class="me-2 side-bar-item-icon" width="20" height="20">
@@ -76,7 +86,7 @@
           </li>
 
           <li class="nav-item">
-            <a href="studyRoom.html" class="nav-link text-dark d-flex align-items-center">
+            <a href="studyroom.php" class="nav-link text-dark d-flex align-items-center">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none"
                 viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                 class="me-2 side-bar-item-icon" width="20" height="20">
@@ -99,7 +109,7 @@
     <aside class="col-lg-2 bg-light d-none d-lg-block p-3 min-vh-100 border-end">
       <ul class="nav flex-column">
           <li class="nav-item md-2">
-            <a href="calendar.html" class="nav-link text-dark d-flex align-items-center">
+            <a href="calendar.php" class="nav-link text-dark d-flex align-items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none"
                 viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                 class="me-2 side-bar-item-icon" width="20" height="20">
@@ -111,7 +121,7 @@
           </li>
 
           <li class="nav-item mb-2">
-            <a href="todo.html" class="nav-link text-dark d-flex align-items-center">
+            <a href="todo.php" class="nav-link d-flex text-dark align-items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none"
                 viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                 class="me-2 side-bar-item-icon" width="20" height="20">
@@ -123,7 +133,7 @@
           </li>
 
           <li class="nav-item mb-2">
-            <a href="pomodoro.html" class="nav-link text-dark d-flex align-items-center">
+            <a href="pomodoro.php" class="nav-link d-flex align-items-center active">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none"
                 viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                 class="me-2 side-bar-item-icon" width="20" height="20">
@@ -135,7 +145,7 @@
           </li>
 
           <li class="nav-item">
-            <a href="studyRoom.html" class="nav-link text-dark d-flex align-items-center">
+            <a href="studyRoom.php" class="nav-link text-dark d-flex align-items-center">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none"
                 viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                 class="me-2 side-bar-item-icon" width="20" height="20">
@@ -149,69 +159,53 @@
 
     </aside>
 
-    <!-- Main Content -->
-    <main class="col-lg-10 p-4">
-      <!-- Greeting -->
-      <div class="mb-4">
-        <h4>Hello, <span class="Username">Username</span></h4>
-      </div>
+<!-- Main Content -->
+<main class="col-lg-10 p-4 main-content">
+            <div class="row justify-content-center">
+                <div class="col-md-8 col-lg-6">
+                    <div class="card p-4 text-center shadow">
+                        <div class="card-body">
+                            <h2 class="card-title fw-bold mb-4" id="timer-status">Session</h2>
+                            <div id="main-timer-display" class="timer-display display-1 fw-bold mb-4">
+                                25:00
+                            </div>
+                            <div class="btn-group mb-4" role="group">
+                                <button class="btn btn-success" id="startBtn">Start</button>
+                                <button class="btn btn-danger" id="stopBtn">Pause</button>
+                                <button class="btn btn-secondary" id="resetBtn">Reset</button>
+                            </div>
+                            
+                            <hr class="my-4">
 
-      <!-- Dashboard Cards -->
-      <div class="row g-4">
-        <div class="col-12 col-md-6 col-lg-4">
-          <div class="card h-100">
-            <div class="card-header fw-bold">Today's To-do</div>
-            <div class="card-body">
-              <p class="text-muted">No tasks added</p>
+                            <h4 class="fw-semibold mb-3">Settings</h4>
+                            <div class="row g-3 justify-content-center">
+                                <div class="col-md-4">
+                                    <label for="session-length" class="form-label">Session (min)</label>
+                                    <input type="number" id="session-length" class="form-control text-center" value="25" min="1" max="180">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="short-break" class="form-label">Short Break (min)</label>
+                                    <input type="number" id="short-break" class="form-control text-center" value="5" min="1" max="60">
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="long-break" class="form-label">Long Break (min)</label>
+                                    <input type="number" id="long-break" class="form-control text-center" value="15" min="1" max="120">
+                                </div>
+                                <div class="col-md-6 mb-2">
+                                    <label for="sessionCount" class="form-label fw-semibold">Number of Study Sessions:</label>
+                                    <input type="number" id="sessionCount" class="form-control" min="1" max="10" value="3">
+                                </div>
+                            </div>
+                            <div class="mt-4">
+                                <button class="btn btn-primary" id="save-settings-btn">Save Settings</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-
-        <div class="col-12 col-md-6 col-lg-4">
-          <div class="card h-100">
-            <div class="card-header fw-bold">Month</div>
-            <div class="card-body">
-              <div class="d-flex justify-content-between mb-3 flex-wrap">
-                <span>1</span><span>2</span><span>3</span><strong>4</strong><span>5</span><span>6</span><span>7</span>
-              </div>
-              <h6 class="fw-semibold">Today's events</h6>
-              <div class="d-flex align-items-center">
-                <div class="bg-primary rounded-circle me-2" style="width: 10px; height: 10px;"></div>
-                <div>Event text</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-12 col-md-6 col-lg-4">
-          <div class="card text-center h-100">
-            <div class="card-header fw-bold">Pomodoro Timer</div>
-            <div class="card-body">
-              <div class="session-title mb-2">Session</div>
-              <div class="timer mb-3">00:00</div>
-              <div class="d-flex justify-content-center gap-2">
-                <button class="btn btn-success">Start</button>
-                <button class="btn btn-secondary">Reset</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Meetings -->
-      <div class="mt-5">
-        <div class="card p-3 d-flex flex-column flex-md-row align-items-center gap-3">
-          <div class="bg-info rounded-circle" style="width: 40px; height: 40px;"></div>
-          <div class="flex-grow-1">Upcoming Meeting Title</div>
-          <div>
-            <button class="btn btn-outline-primary">Join</button>
-          </div>
-        </div>
-      </div>
-    </main>
-  </div>
-</div>
-
+        </main>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="../script/pomodoro.js"></script>
 </body>
 </html>

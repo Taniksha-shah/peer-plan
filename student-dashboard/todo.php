@@ -1,15 +1,24 @@
+<?php
+session_start();
+
+// Redirect to login page if user is not logged in
+if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
+    header("Location: login.html");
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>PeerPlan Study-room</title>
+  <title>PeerPlan To-do List</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="../style/dashboard.css" rel="stylesheet" />
+
 </head>
 <body>
 
-  
   <!-- Navbar -->
 <nav class="navbar navbar-dark navbar-expand-lg" style="background-color: rgb(93, 13, 45);">
   <div class="container-fluid">
@@ -26,7 +35,7 @@
           <path stroke-linecap="round" stroke-linejoin="round"
             d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
         </svg>
-        <span class="username">Username</span>
+        <span class="username"><?php echo htmlspecialchars($_SESSION['username']); ?></span>
       </a>
     </div>
   </div>
@@ -41,7 +50,7 @@
   <div class="offcanvas-body">
     <ul class="nav flex-column">
           <li class="nav-item md-2">
-            <a href="calendar.html" class="nav-link text-dark d-flex align-items-center">
+            <a href="calendar.php" class="nav-link text-dark d-flex align-items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none"
                 viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                 class="me-2 side-bar-item-icon" width="20" height="20">
@@ -53,7 +62,7 @@
           </li>
 
           <li class="nav-item mb-2">
-            <a href="todo.html" class="nav-link text-dark d-flex align-items-center">
+            <a href="todo.php" class="nav-link text-dark d-flex align-items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none"
                 viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                 class="me-2 side-bar-item-icon" width="20" height="20">
@@ -65,7 +74,7 @@
           </li>
 
           <li class="nav-item mb-2">
-            <a href="pomodoro.html" class="nav-link text-dark d-flex align-items-center">
+            <a href="pomodoro.php" class="nav-link text-dark d-flex align-items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none"
                 viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                 class="me-2 side-bar-item-icon" width="20" height="20">
@@ -77,7 +86,7 @@
           </li>
 
           <li class="nav-item">
-            <a href="studyRoom.html" class="nav-link text-dark d-flex align-items-center">
+            <a href="studyroom.php" class="nav-link text-dark d-flex align-items-center">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none"
                 viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                 class="me-2 side-bar-item-icon" width="20" height="20">
@@ -100,7 +109,7 @@
     <aside class="col-lg-2 bg-light d-none d-lg-block p-3 min-vh-100 border-end">
       <ul class="nav flex-column">
           <li class="nav-item md-2">
-            <a href="calendar.html" class="nav-link text-dark d-flex align-items-center">
+            <a href="calendar.php" class="nav-link text-dark d-flex align-items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none"
                 viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                 class="me-2 side-bar-item-icon" width="20" height="20">
@@ -112,7 +121,7 @@
           </li>
 
           <li class="nav-item mb-2">
-            <a href="todo.html" class="nav-link text-dark d-flex align-items-center">
+            <a href="todo.php" class="nav-link d-flex align-items-center active">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none"
                 viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                 class="me-2 side-bar-item-icon" width="20" height="20">
@@ -124,7 +133,7 @@
           </li>
 
           <li class="nav-item mb-2">
-            <a href="pomodoro.html" class="nav-link text-dark d-flex align-items-center">
+            <a href="pomodoro.php" class="nav-link text-dark d-flex align-items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none"
                 viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                 class="me-2 side-bar-item-icon" width="20" height="20">
@@ -136,7 +145,7 @@
           </li>
 
           <li class="nav-item">
-            <a href="studyRoom.html" class="nav-link d-flex align-items-center active">
+            <a href="studyRoom.php" class="nav-link text-dark d-flex align-items-center">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none"
                 viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                 class="me-2 side-bar-item-icon" width="20" height="20">
@@ -150,44 +159,40 @@
 
     </aside>
 
+<main class="col-lg-10 p-4">
+  <!-- Title Input -->
+  <div class="mb-4">
+    <label for="todoTitle" class="form-label fw-bold">To-Do List Title</label>
+    <input type="text" class="form-control" id="todoTitle" placeholder="e.g., Grocery List">
+  </div>
 
-  <!-- Main Content -->
-  <main class="col-lg-10 p-4">
-    <div class="form-section mt-0">
-      <h2>Schedule a Study Meeting</h2>
-      <form action="studyroom.html" method="GET">
-        <div class="mb-3">
-          <label for="title" class="form-label">Title</label>
-          <input type="text" id="title" class="form-control" required>
-        </div>
-        <div class="mb-3">
-          <label for="subject" class="form-label">Subject</label>
-          <input type="text" id="subject" class="form-control">
-        </div>
-        <div class="mb-3">
-          <label for="date" class="form-label">Date</label>
-          <input type="date" id="date" class="form-control" required>
-        </div>
-        <div class="mb-3">
-          <label for="time" class="form-label">Start Time</label>
-          <input type="time" id="time" class="form-control" required>
-        </div>
-        <div class="mb-3">
-          <label for="description" class="form-label">Notes</label>
-          <textarea id="description" class="form-control"></textarea>
-        </div>
-        <button type="submit" class="btn btn-primary">Create Meeting</button>
-      </form>
+  <!-- Task Input Section -->
+  <div class="card p-3 shadow-sm">
+    <div class="d-flex align-items-center gap-3 mb-3">
+      <input type="text" id="taskInput" class="form-control" placeholder="Add a task...">
+      <button id="addTaskBtn" class="btn btn-outline-primary d-flex align-items-center justify-content-center p-2" style="width: 40px; height: 40px;">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" width="20" height="20">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+        </svg>
+      </button>
     </div>
 
-    <div class="list-section">
-      <h2>Available Public Meetings</h2>
-      <div id="meetingsList">
-        <p>No meetings yet. Be the first to schedule!</p>
-      </div>
-    </div>
-  </main>
+    <!-- Current Task List -->
+    <ul id="taskList" class="list-group list-group-flush"></ul>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <button id="saveListBtn" class="btn btn-success mt-3">Done (Save List)</button>
+  </div>
+
+  <!-- Saved Lists Section -->
+  <div class="mt-5">
+    <h4>Saved To-Do Lists</h4>
+    <div id="savedListsContainer" class="row g-3 mt-3"></div>
+  </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="../script/todolist.js"></script>
+
 </body>
 </html>

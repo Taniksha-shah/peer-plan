@@ -1,9 +1,18 @@
+<?php
+session_start();
+
+// Redirect to login page if user is not logged in
+if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
+    header("Location: login.html");
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>PeerPlan Pomodoro Timer</title>
+  <title>PeerPlan Study-room</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
   <link href="../style/dashboard.css" rel="stylesheet" />
 </head>
@@ -26,7 +35,7 @@
           <path stroke-linecap="round" stroke-linejoin="round"
             d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
         </svg>
-        <span class="username">Username</span>
+        <span class="username"><?php echo htmlspecialchars($_SESSION['username']); ?></span>
       </a>
     </div>
   </div>
@@ -41,7 +50,7 @@
   <div class="offcanvas-body">
     <ul class="nav flex-column">
           <li class="nav-item md-2">
-            <a href="calendar.html" class="nav-link text-dark d-flex align-items-center">
+            <a href="calendar.php" class="nav-link text-dark d-flex align-items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none"
                 viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                 class="me-2 side-bar-item-icon" width="20" height="20">
@@ -53,7 +62,7 @@
           </li>
 
           <li class="nav-item mb-2">
-            <a href="todo.html" class="nav-link text-dark d-flex align-items-center">
+            <a href="todo.php" class="nav-link text-dark d-flex align-items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none"
                 viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                 class="me-2 side-bar-item-icon" width="20" height="20">
@@ -65,7 +74,7 @@
           </li>
 
           <li class="nav-item mb-2">
-            <a href="pomodoro.html" class="nav-link text-dark d-flex align-items-center">
+            <a href="pomodoro.php" class="nav-link text-dark d-flex align-items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none"
                 viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                 class="me-2 side-bar-item-icon" width="20" height="20">
@@ -77,7 +86,7 @@
           </li>
 
           <li class="nav-item">
-            <a href="studyRoom.html" class="nav-link text-dark d-flex align-items-center">
+            <a href="studyroom.php" class="nav-link text-dark d-flex align-items-center">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none"
                 viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                 class="me-2 side-bar-item-icon" width="20" height="20">
@@ -100,7 +109,7 @@
     <aside class="col-lg-2 bg-light d-none d-lg-block p-3 min-vh-100 border-end">
       <ul class="nav flex-column">
           <li class="nav-item md-2">
-            <a href="calendar.html" class="nav-link text-dark d-flex align-items-center">
+            <a href="calendar.php" class="nav-link text-dark d-flex align-items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none"
                 viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                 class="me-2 side-bar-item-icon" width="20" height="20">
@@ -112,7 +121,7 @@
           </li>
 
           <li class="nav-item mb-2">
-            <a href="todo.html" class="nav-link text-dark d-flex align-items-center">
+            <a href="todo.php" class="nav-link text-dark d-flex align-items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none"
                 viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                 class="me-2 side-bar-item-icon" width="20" height="20">
@@ -124,7 +133,7 @@
           </li>
 
           <li class="nav-item mb-2">
-            <a href="pomodoro.html" class="nav-link d-flex align-items-center active">
+            <a href="pomodoro.php" class="nav-link text-dark d-flex align-items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none"
                 viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                 class="me-2 side-bar-item-icon" width="20" height="20">
@@ -136,7 +145,7 @@
           </li>
 
           <li class="nav-item">
-            <a href="studyRoom.html" class="nav-link text-dark d-flex align-items-center">
+            <a href="studyRoom.php" class="nav-link d-flex align-items-center active">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none"
                 viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
                 class="me-2 side-bar-item-icon" width="20" height="20">
@@ -150,67 +159,98 @@
 
     </aside>
 
-
-<!-- Main Content -->
-<main class="col-lg-10 p-4">
-
-  <div class="container timer-container">
-    <div class="timer-box text-center p-4 bg-white rounded shadow">
-
-      <!-- Session Settings -->
-      <div class="row mb-4">
-        <div class="col-md-6 mb-2">
-          <label for="timerType" class="form-label fw-semibold">Select Timer Type:</label>
-          <select class="form-select" id="timerType">
-            <option value="25-5" selected>25-5 (Pomodoro)</option>
-            <option value="25-10">25-10</option>
-            <option value="30-10">30-10</option>
-            <option value="50-10">50-10</option>
-            <option value="60-15">60-15</option>
-            <option value="90-20">90-20</option>
-          </select>
-        </div>
-        <div class="col-md-6 mb-2">
-          <label for="sessionCount" class="form-label fw-semibold">Number of Study Sessions:</label>
-          <input type="number" id="sessionCount" class="form-control" min="1" max="10" value="3">
-        </div>
-      </div>
-
-      <!-- Dynamic Session Label -->
-      <div class="session-label fs-5 fw-bold text-secondary mb-2" id="sessionLabel">
-        Study Session 1 of 3
-      </div>
-
-      <!-- Timer Display -->
-      <div class="timer-display display-1 fw-bold mb-4" id="timer">
-        25:00
-      </div>
-
-      <!-- Controls -->
-      <div class="btn-group mb-4" role="group">
-        <button class="btn btn-success" id="startBtn">Start</button>
-        <button class="btn btn-danger" id="stopBtn">Pause</button>
-        <button class="btn btn-secondary" id="resetBtn">Reset</button>
-      </div>
-
-      <!-- Optional: Task Input -->
-      <div class="mb-3">
-        <input type="text" class="form-control" id="taskInput" placeholder="What are you working on?">
-      </div>
-
-      <!-- Progress Display -->
-      <div id="progressDisplay" class="text-muted">
-        🎯 Sessions Completed: 0
-      </div>
-
+  <main class="col-lg-10 p-4">
+    <div class="form-section mt-0">
+        <h2>Schedule a Study Meeting</h2>
+        <form id="createMeetingForm" method="POST">
+            <div class="mb-3">
+                <label for="title" class="form-label">Title</label>
+                <input type="text" name="title" id="title" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="subject" class="form-label">Subject</label>
+                <input type="text" name="subject" id="subject" class="form-control">
+            </div>
+            <div class="mb-3">
+                <label for="date" class="form-label">Date</label>
+                <input type="date" name="date" id="date" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="time" class="form-label">Start Time</label>
+                <input type="time" name="time" id="time" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="description" class="form-label">Notes</label>
+                <textarea name="description" id="description" class="form-control"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary">Create Meeting</button>
+        </form>
     </div>
-  </div>
+    
+    <hr>
 
-  <div class="form-section mt-5"></div>
+    <div class="list-section mt-5">
+        <h2>Available Public Meetings</h2>
+        <div id="meetingsList" class="row">
+            <p class="text-muted">Loading meetings...</p>
+        </div>
+    </div>
 </main>
-
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Function to fetch and display meetings
+        function fetchMeetings() {
+            $.get('get_meetings.php', function(data) {
+                const meetingsList = $('#meetingsList');
+                meetingsList.empty(); // Clear existing content
 
-<script src="../script/pomodoro.js"></script>
+                if (data.length > 0) {
+                    data.forEach(meeting => {
+                        meetingsList.append(`
+                            <div class="col-md-6 mb-4">
+                                <div class="card h-100">
+                                    <div class="card-body">
+                                        <h5 class="card-title">${meeting.title} - ${meeting.subject}</h5>
+                                        <p class="card-text"><strong>Date:</strong> ${meeting.meet_date}</p>
+                                        <p class="card-text"><strong>Time:</strong> ${meeting.start_time}</p>
+                                        <p class="card-text">${meeting.description}</p>
+                                        <a href="#" class="btn btn-sm btn-success">Join Meeting</a>
+                                    </div>
+                                    <div class="card-footer text-muted">
+                                        Created by ${meeting.username}
+                                    </div>
+                                </div>
+                            </div>
+                        `);
+                    });
+                } else {
+                    meetingsList.append('<p class="text-muted">No meetings yet. Be the first to schedule!</p>');
+                }
+            });
+        }
+
+        // Handle form submission using AJAX
+        $('#createMeetingForm').on('submit', function(e) {
+            e.preventDefault();
+            const formData = $(this).serialize();
+
+            $.post('create_meeting.php', formData, function(response) {
+                if (response.status === 'success') {
+                    alert('Meeting created successfully!');
+                    $('#createMeetingForm')[0].reset(); // Reset the form
+                    fetchMeetings(); // Refresh the list
+                } else {
+                    alert('Error: ' + response.message);
+                }
+            }, 'json');
+        });
+
+        // Initial fetch of meetings
+        fetchMeetings();
+    });
+</script>
+  
 </body>
 </html>

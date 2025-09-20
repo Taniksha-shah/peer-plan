@@ -1,45 +1,52 @@
 <?php
-session_start();
+// Database connection details
+$servername = "localhost";
+$dbusername = "root"; // Replace with your database username
+$dbpassword = "";     // Replace with your database password
+$dbname = "peerplan"; // Replace with your database name
 
-// Database connection
-$host = "localhost"; 
-$dbname = "peerplan"; 
-$user = "root";       // change if needed
-$pass = "";           // your DB password
+// Create connection
+$conn = new mysqli($servername, $dbusername, $dbpassword, $dbname);
 
-$conn = new mysqli($host, $user, $pass, $dbname);
-
+// Check connection
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Collect form data
+// Check if form data is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = trim($_POST['username']);
+    // Get form data
+    $username = $_POST['username'];
     $password = $_POST['password'];
 
-    // Check empty fields
+    // Validate input (optional but recommended)
     if (empty($username) || empty($password)) {
-        die("Please fill all fields.");
+        die("Username and password are required.");
     }
 
-    // Hash password for security
-    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+    // Hash the password for security
+    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-    // Insert into database
+    // Prepare and bind the SQL statement to prevent SQL injection
     $stmt = $conn->prepare("INSERT INTO users (username, password) VALUES (?, ?)");
-    $stmt->bind_param("ss", $username, $hashedPassword);
+    $stmt->bind_param("ss", $username, $hashed_password);
 
+    // Execute the statement
     if ($stmt->execute()) {
-        // Store session and redirect
-        $_SESSION['username'] = $username;
+        // Registration successful, redirect to dashboard.html
         header("Location: dashboard.php");
-        exit();
+        exit(); // Important to exit after a header redirect
     } else {
-        echo "Error: " . $stmt->error;
+        // Check for a duplicate username error
+        if ($conn->errno == 1062) {
+            echo "Error: The username '{$username}' already exists. Please choose a different one.";
+        } else {
+            echo "Error: " . $stmt->error;
+        }
     }
 
+    // Close statement and connection
     $stmt->close();
+    $conn->close();
 }
-$conn->close();
 ?>
