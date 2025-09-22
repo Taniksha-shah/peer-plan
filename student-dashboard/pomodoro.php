@@ -28,7 +28,7 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     <a class="navbar-brand fw-bold" href="index.html">PeerPlan</a>
     <div class="ms-auto d-flex align-items-center gap-3">
       <a class="nav-link text-white d-none d-lg-block" href="about.html">About</a>
-      <a href="profile.html" class="btn btn-light d-flex align-items-center gap-2">
+      <a href="profile.php" class="btn btn-light d-flex align-items-center gap-2">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none"
           viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
           class="user-pfp" width="32" height="32">

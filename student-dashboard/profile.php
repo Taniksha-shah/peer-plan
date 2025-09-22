@@ -1,3 +1,11 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
+    header("Location: login.html");
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,7 +26,7 @@
     <a class="navbar-brand fw-bold" href="index.html">PeerPlan</a>
     <div class="ms-auto d-flex align-items-center gap-3">
       <a class="nav-link text-white d-none d-lg-block" href="about.html">About</a>
-      <a href="profile.html" class="btn btn-light d-flex align-items-center gap-2">
+      <a href="profile.php" class="btn btn-light d-flex align-items-center gap-2">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none"
           viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
           class="user-pfp" width="32" height="32">
@@ -183,7 +191,7 @@
             <div class="col-md-8">
               <div class="card p-4 shadow-sm">
                 <h5 class="mb-3">Profile Information</h5>
-                <form>
+                <form id="profileForm">
                   <div class="mb-3">
                     <label for="fullName" class="form-label fw-semibold">Full Name</label>
                     <input type="text" class="form-control" id="fullName" placeholder="Name">
@@ -214,5 +222,6 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../script/profile.js"></script>
 </body>
 </html>
