@@ -334,29 +334,46 @@ document.addEventListener('DOMContentLoaded', function() {
     fetchEventsForDate(today);
 
 });
-</script>
-<script>
-// To-do List logic
-    function fetchLatestTodo() {
-        fetch('get_latest_todo.php')
-            .then(response => response.json())
+
+document.addEventListener("DOMContentLoaded", () => {
+    const lastTodoListContainer = document.getElementById("latest-todo-item");
+
+    fetchLastSavedList();
+
+    function fetchLastSavedList() {
+        fetch('get_last_list.php')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
             .then(data => {
-                const container = document.getElementById('latest-todo-item');
-                if (data && data.task) {
-                    container.innerHTML = `
-                        <div class="d-flex align-items-center gap-2">
-                            <input type="checkbox" disabled>
-                            <span>${data.task}</span>
-                        </div>
-                    `;
+                if (data.status === 'success' && data.list) {
+                    renderLastList(data.list);
                 } else {
-                    container.innerHTML = `<p class="text-muted">No tasks added.</p>`;
+                    lastTodoListContainer.innerHTML = `<p class="text-muted">No saved lists yet.</p>`;
                 }
             })
             .catch(error => {
-                console.error('Error fetching latest todo:', error);
+                console.error('Error fetching last list:', error);
+                lastTodoListContainer.innerHTML = `<p class="text-danger">Failed to load the list.</p>`;
             });
     }
+
+    function renderLastList(list) {
+        lastTodoListContainer.innerHTML = `
+            <h5 class="card-title">${list.title}</h5>
+            <ul class="list-group list-group-flush mt-2">
+                ${list.tasks.map(task => `
+                    <li class="list-group-item d-flex align-items-center">
+                        <span class="${task.is_completed == 1 ? 'text-decoration-line-through text-muted' : ''}">${task.title}</span>
+                    </li>
+                `).join('')}
+            </ul>
+        `;
+    }
+});
 
     // Pomodoro Timer logic
     let timerInterval;
@@ -406,8 +423,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initial calls on page load
     updateTimerDisplay();
     fetchLatestTodo();
-</script>
-<script>
+
+
     // New Pomodoro sync logic
     function syncPomodoroTimer() {
         const dashboardTimerDisplay = document.getElementById('pomodoro-timer-display');

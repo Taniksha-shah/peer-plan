@@ -1,166 +1,143 @@
 document.addEventListener("DOMContentLoaded", () => {
+    const todoTitleInput = document.getElementById("todoTitle");
     const taskInput = document.getElementById("taskInput");
     const addTaskBtn = document.getElementById("addTaskBtn");
     const taskList = document.getElementById("taskList");
+    const saveListBtn = document.getElementById("saveListBtn");
+    const savedListsContainer = document.getElementById("savedListsContainer");
+
+    let currentTasks = [];
 
     // Event listeners
     addTaskBtn.addEventListener("click", addTask);
     taskInput.addEventListener("keypress", (e) => {
         if (e.key === "Enter") addTask();
     });
+    saveListBtn.addEventListener("click", saveList);
 
-    // Initial load of tasks from the database
-    loadTasks();
+    // Initial load
+    loadSavedLists();
 
-    // Fetches and renders all tasks for the logged-in user from the database
-    function loadTasks() {
-        fetch('get_tasks.php')
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(tasks => {
-                taskList.innerHTML = "";
-                if (tasks.length === 0) {
-                    taskList.innerHTML = `<li class="list-group-item text-muted">No tasks yet.</li>`;
-                    return;
-                }
-                tasks.forEach(task => renderTask(task));
-            })
-            .catch(error => {
-                console.error('Error fetching tasks:', error);
-                taskList.innerHTML = `<li class="list-group-item text-danger">Failed to load tasks.</li>`;
-            });
-    }
-
-    // Sends a new task to the server to be saved in the database
+    // Adds a task to the current in-memory list
     function addTask() {
         const title = taskInput.value.trim();
         if (!title) return;
 
-        fetch('add_task.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: `title=${encodeURIComponent(title)}`
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.status === 'success') {
-                // Render the newly added task on the page
-                renderTask({
-                    id: data.id,
-                    title: title,
-                    is_completed: 0
-                });
-                taskInput.value = "";
-            } else {
-                alert('Error adding task: ' + data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error adding task:', error);
-            alert('Failed to add task.');
-        });
+        const task = {
+            title: title,
+            is_completed: false
+        };
+
+        currentTasks.push(task);
+        renderTask(task);
+        taskInput.value = "";
     }
 
-    // Deletes a task from the database
-    function deleteTask(taskId, element) {
-        if (!confirm("Are you sure you want to delete this task?")) return;
-
-        fetch('delete_task.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: `id=${taskId}`
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.status === 'success') {
-                element.remove();
-            } else {
-                alert('Error deleting task: ' + data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error deleting task:', error);
-            alert('Failed to delete task.');
-        });
-    }
-
-    // Toggles a task's completion status in the database
-    function toggleTask(taskId, isCompleted) {
-        fetch('update_task.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: `id=${taskId}&is_completed=${isCompleted ? 1 : 0}`
-        })
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            if (data.status !== 'success') {
-                alert('Error updating task: ' + data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error updating task:', error);
-            alert('Failed to update task.');
-        });
-    }
-
-    // Renders a single task element on the page
+    // Renders a single task in the current list
     function renderTask(task) {
         const li = document.createElement("li");
-        li.className = "list-group-item d-flex justify-content-between align-items-center";
+        li.className = `list-group-item d-flex justify-content-between align-items-center`;
 
-        const leftDiv = document.createElement("div");
-        leftDiv.className = "d-flex align-items-center gap-2";
+        li.innerHTML = `
+            <div class="form-check d-flex align-items-center">
+                <input class="form-check-input me-2" type="checkbox">
+                <label class="form-check-label">${task.title}</label>
+            </div>
+            <button class="btn btn-sm btn-danger delete-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-lg" viewBox="0 0 16 16">
+                    <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/>
+                </svg>
+            </button>
+        `;
 
-        const checkbox = document.createElement("input");
-        checkbox.type = "checkbox";
-        checkbox.checked = task.is_completed == 1;
-        checkbox.addEventListener("change", () => {
-            toggleTask(task.id, checkbox.checked);
-            li.style.textDecoration = checkbox.checked ? "line-through" : "none";
+        const deleteBtn = li.querySelector('.delete-btn');
+        deleteBtn.addEventListener('click', () => {
+            const index = currentTasks.findIndex(t => t.title === task.title);
+            if (index > -1) {
+                currentTasks.splice(index, 1);
+            }
+            li.remove();
         });
 
-        const span = document.createElement("span");
-        span.textContent = task.title;
-        if (task.is_completed == 1) {
-            li.style.textDecoration = "line-through";
+        taskList.appendChild(li);
+    }
+
+    // Saves the current list to the database
+    function saveList() {
+        const title = todoTitleInput.value.trim();
+        if (!title) {
+            alert("Please enter a title for your list.");
+            return;
         }
 
-        leftDiv.appendChild(checkbox);
-        leftDiv.appendChild(span);
+        if (currentTasks.length === 0) {
+            alert("Please add at least one task to save the list.");
+            return;
+        }
 
-        const delBtn = document.createElement("button");
-        delBtn.className = "btn btn-sm btn-outline-danger";
-        delBtn.textContent = "Remove";
-        delBtn.addEventListener("click", () => deleteTask(task.id, li));
+        const taskTitles = currentTasks.map(task => task.title);
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('tasks', JSON.stringify(taskTitles));
 
-        li.appendChild(leftDiv);
-        li.appendChild(delBtn);
+        fetch('../student-dashboard/save_list.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                alert("List saved successfully!");
+                // Clear the current list
+                currentTasks = [];
+                taskList.innerHTML = "";
+                todoTitleInput.value = "";
+                // Reload saved lists to show the new one
+                loadSavedLists();
+            } else {
+                alert("Error saving list: " + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error saving list:', error);
+            alert("Failed to save the list.");
+        });
+    }
 
-        taskList.appendChild(li);
+    // Fetches and displays all saved lists
+    function loadSavedLists() {
+        fetch('../student-dashboard/get_lists.php')
+            .then(response => response.json())
+            .then(lists => {
+                savedListsContainer.innerHTML = "";
+                if (lists.length === 0) {
+                    savedListsContainer.innerHTML = `<p class="text-muted">No saved lists yet.</p>`;
+                    return;
+                }
+                lists.forEach(list => renderSavedList(list));
+            })
+            .catch(error => {
+                console.error('Error fetching saved lists:', error);
+                savedListsContainer.innerHTML = `<p class="text-danger">Failed to load saved lists.</p>`;
+            });
+    }
+
+    // Renders a single saved list as a card
+    function renderSavedList(list) {
+        const card = document.createElement("div");
+        card.className = "col-md-6";
+        card.innerHTML = `
+            <div class="card shadow-sm p-3">
+                <h5 class="card-title fw-bold">${list.title}</h5>
+                <ul class="list-group list-group-flush mt-2">
+                    ${list.tasks.map(task => `
+                        <li class="list-group-item d-flex align-items-center">
+                            <span class="${task.is_completed == 1 ? 'text-decoration-line-through text-muted' : ''}">${task.title}</span>
+                        </li>
+                    `).join('')}
+                </ul>
+            </div>
+        `;
+        savedListsContainer.appendChild(card);
     }
 });

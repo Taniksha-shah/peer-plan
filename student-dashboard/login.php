@@ -37,6 +37,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $_SESSION['id'] = $user['id'];
             $_SESSION['username'] = $user['username'];
 
+            // Define the log file path
+$log_file = 'login_log.txt';
+
+// Get the current date and time
+$login_time = date('Y-m-d H:i:s');
+
+// Format the log entry
+$log_entry = "[" . $login_time . "] - User: " . $user['username'] . " logged in." . PHP_EOL;
+
+// Open the file in append mode ('a') and write the log entry
+file_put_contents($log_file, $log_entry, FILE_APPEND | LOCK_EX);
+
             // Redirect to dashboard page
             header("Location: dashboard.php");
             exit();

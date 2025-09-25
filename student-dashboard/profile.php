@@ -5,6 +5,44 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
     header("Location: login.html");
     exit;
 }
+
+require 'db_connect.php';
+
+// Check if a valid user ID is in the session
+$user_id = $_SESSION['id'] ?? null;
+
+if (is_null($user_id)) {
+    // If the session ID is missing, log out the user and redirect to login
+    header("Location: logout.php");
+    exit;
+}
+
+// Check if a profile exists for the current user
+$profile_check_stmt = $conn->prepare("SELECT id FROM profiles WHERE user_id = ?");
+$profile_check_stmt->bind_param("i", $user_id);
+$profile_check_stmt->execute();
+$profile_result = $profile_check_stmt->get_result();
+$profile_check_stmt->close();
+
+if ($profile_result->num_rows === 0) {
+    // If no profile exists, create a new one
+    $insert_profile_stmt = $conn->prepare("INSERT INTO profiles (user_id, email) VALUES (?, ?)");
+    $placeholder_email = $_SESSION['username'] . '@example.com';
+    $insert_profile_stmt->bind_param("is", $user_id, $placeholder_email);
+    $insert_profile_stmt->execute();
+    $insert_profile_stmt->close();
+}
+
+// Fetch user and profile data using a JOIN
+$user_id = $_SESSION['id'];
+$stmt = $conn->prepare("SELECT u.username, p.email, p.fullname, p.bio, p.interests, p.created_at FROM users u JOIN profiles p ON u.id = p.user_id WHERE u.id = ?");
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$user = $result->fetch_assoc();
+$stmt->close();
+$conn->close();
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -33,7 +71,7 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
           <path stroke-linecap="round" stroke-linejoin="round"
             d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
         </svg>
-        <span class="username">Username</span>
+        <span class="username"><?php echo htmlspecialchars($user['username']); ?></span>
       </a>
     </div>
   </div>
@@ -160,64 +198,58 @@ if (!isset($_SESSION['loggedin']) || $_SESSION['loggedin'] !== true) {
 
       <!-- Main Content -->
       <main class="col-md-10 main-content mt-4">
-        <div class="container-fluid">
-          <div class="row">
+      <div class="container-fluid">
+        <div class="row">
 
-            
-            <!-- Profile Card -->
-            <div class="col-md-4">
-              <div class="card p-4 text-center shadow-sm">
-                <div class="rounded-circle bg-light d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 120px; height: 120px;">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none"
-                    viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
-                    width="64" height="64" class="text-secondary">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                      d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 
-                         7.488 0 0 0-5.982 2.975m11.963 0a9 
-                         9 0 1 0-11.963 0m11.963 0A8.966 
-                         8.966 0 0 1 12 21a8.966 8.966 
-                         0 0 1-5.982-2.275M15 9.75a3 
-                         3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                  </svg>
+          <div class="col-md-4">
+            <div class="card p-4 text-center shadow-sm">
+              <div class="rounded-circle bg-light d-flex align-items-center justify-content-center mx-auto mb-3" style="width: 120px; height: 120px;">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+                  viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+                  width="64" height="64" class="text-secondary">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 
+                        7.488 0 0 0-5.982 2.975m11.963 0a9 
+                        9 0 1 0-11.963 0m11.963 0A8.966 
+                        8.966 0 0 1 12 21a8.966 8.966 
+                        0 0 1-5.982-2.275M15 9.75a3 
+                        3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                </svg>
+              </div>
+              <h4 class="fw-bold"><?php echo htmlspecialchars($user['username']); ?></h4>
+              <p class="text-muted">Student / User Role</p>
+              <button class="btn btn-outline-secondary btn-sm">Edit Photo</button>
+            </div>
+          </div>
+
+          <div class="col-md-8">
+            <div class="card p-4 shadow-sm">
+              <h5 class="mb-3">Profile Information</h5>
+              <form id="profileForm">
+                <div class="mb-3">
+                  <label for="fullName" class="form-label fw-semibold">Full Name</label>
+                  <input type="text" class="form-control" id="fullName" name="fullName" placeholder="Name" value="<?php echo htmlspecialchars($user['fullname']); ?>">
                 </div>
-
-                <h4 class="fw-bold">Username</h4>
-                <p class="text-muted">Student / User Role</p>
-                <button class="btn btn-outline-secondary btn-sm">Edit Photo</button>
-              </div>
+                <div class="mb-3">
+                  <label for="email" class="form-label fw-semibold">Email</label>
+                  <input type="email" class="form-control" id="email" name="email" placeholder="user@example.com" value="<?php echo htmlspecialchars($user['email']); ?>">
+                </div>
+                <div class="mb-3">
+                  <label for="bio" class="form-label fw-semibold">Bio</label>
+                  <textarea class="form-control" id="bio" name="bio" rows="3" placeholder="Tell us about yourself..."><?php echo htmlspecialchars($user['bio']); ?></textarea>
+                </div>
+                <div class="mb-3">
+                  <label for="interests" class="form-label fw-semibold">Interests</label>
+                  <input type="text" class="form-control" id="interests" name="interests" value="<?php echo htmlspecialchars($user['interests']); ?>">
+                </div>
+                <button type="submit" class="btn btn-primary me-2">Save Changes</button>
+                <button type="reset" class="btn btn-outline-secondary">Cancel</button>
+              </form>
             </div>
-
-            <!-- User Details -->
-            <div class="col-md-8">
-              <div class="card p-4 shadow-sm">
-                <h5 class="mb-3">Profile Information</h5>
-                <form id="profileForm">
-                  <div class="mb-3">
-                    <label for="fullName" class="form-label fw-semibold">Full Name</label>
-                    <input type="text" class="form-control" id="fullName" placeholder="Name">
-                  </div>
-                  <div class="mb-3">
-                    <label for="email" class="form-label fw-semibold">Email</label>
-                    <input type="email" class="form-control" id="email"placeholder="user@example.com">
-                  </div>
-                  <div class="mb-3">
-                    <label for="bio" class="form-label fw-semibold">Bio</label>
-                    <textarea class="form-control" id="bio" rows="3" placeholder="Tell us about yourself..."></textarea>
-                  </div>
-                  <div class="mb-3">
-                    <label for="interests" class="form-label fw-semibold">Interests</label>
-                    <input type="text" class="form-control" id="interests" value="Astronomy, Programming, Study Groups...">
-                  </div>
-                  <button type="submit" class="btn btn-primary me-2">Save Changes</button>
-                  <button type="reset" class="btn btn-outline-secondary">Cancel</button>
-                </form>
-              </div>
-            </div>
-
           </div>
         </div>
-      </main>
-
+      </div>
+    </main>
     </div>
   </div>
 

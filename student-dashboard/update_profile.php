@@ -12,24 +12,25 @@ require 'db_connect.php';
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $user_id = $_SESSION['id'];
-    $full_name = $_POST['full_name'] ?? null;
-    $bio = $_POST['bio'] ?? null;
-    $profile_picture_url = $_POST['profile_picture_url'] ?? null;
+    $fullname = trim($_POST['fullName']);
+    $email = trim($_POST['email']);
+    $bio = trim($_POST['bio']);
+    $interests = trim($_POST['interests']);
 
-    $stmt = $conn->prepare("UPDATE profiles SET full_name = ?, bio = ?, profile_picture_url = ? WHERE user_id = ?");
-    $stmt->bind_param("sssi", $full_name, $bio, $profile_picture_url, $user_id);
+    // Update the profiles table
+    $stmt = $conn->prepare("UPDATE profiles SET fullname = ?, email = ?, bio = ?, interests = ? WHERE user_id = ?");
+    $stmt->bind_param("ssssi", $fullname, $email, $bio, $interests, $user_id);
 
     if ($stmt->execute()) {
-        echo json_encode(['status' => 'success', 'message' => 'Profile updated successfully.']);
+        echo json_encode(['status' => 'success', 'message' => 'Profile updated.']);
     } else {
-        http_response_code(500);
-        echo json_encode(['status' => 'error', 'message' => $stmt->error]);
+        echo json_encode(['status' => 'error', 'message' => 'Database error: ' . $stmt->error]);
     }
 
     $stmt->close();
     $conn->close();
 } else {
-    http_response_code(405);
-    echo json_encode(['status' => 'error', 'message' => 'Method not allowed.']);
+    http_response_code(400);
+    echo json_encode(['status' => 'error', 'message' => 'Invalid request method.']);
 }
 ?>
